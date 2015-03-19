@@ -11,7 +11,7 @@ public class CharacterAttackScriptZoner: MonoBehaviour {
 	public GameObject ThrowObj;
 	public GameObject SweepObj;
 	public GameObject SuperObj;
-
+	public GameObject TrapExplosion;
 	public float FireballStartup;
 	public float FireballRecovery;
 	public float FireballSpeed;
@@ -63,7 +63,7 @@ public class CharacterAttackScriptZoner: MonoBehaviour {
 		// check for ground until no longer airborne
 		if ((transform.position.y <= -3) ){
 			
-			if ((CSS.GetState() == 3) && (NormalMoveObj.activeSelf)){
+			if ((CSS.GetState() == 3) && (NormalMoveAirObj.activeSelf)){
 				
 				cancelNormalMoveAir();
 				airmove = true;
@@ -148,22 +148,26 @@ public class CharacterAttackScriptZoner: MonoBehaviour {
 	
 	// trap functions
 	public void Trap(){
-		if (CSS.GetState() == 1){
+		if (TrapExplosion.activeSelf == false){
 			CSS.SetState(4, TrapMoveRecovery);
 			Invoke("UseTrap", TrapMoveStartup);
 		}
 	}
 	
 	void UseTrap(){
-		TrapObj.gameObject.SetActive (false);
-		TrapObj.gameObject.SetActive (true);
-		if (facing.getDirection (Player1)) {
-			TrapObj.transform.position  = new Vector3( transform.position.x +6, -4.3f, 0);
+		if (TrapObj.activeSelf == false) {
+			TrapObj.gameObject.SetActive (false);
+			TrapObj.gameObject.SetActive (true);
+			if (facing.getDirection (Player1)) {
+					TrapObj.transform.position = new Vector3 (transform.position.x + 6, -4.3f, 0);
+			} else {
+					TrapObj.transform.position = new Vector3 (transform.position.x - 6, -4.3f, 0);
+
+			}
 		}else {
-			TrapObj.transform.position  = new Vector3( transform.position.x -6, -4.3f, 0);
-			
+			TrapObj.SetActive(false);
 		}
-		
+
 	}
 	
 	// throw functions
@@ -239,7 +243,7 @@ public class CharacterAttackScriptZoner: MonoBehaviour {
 	// to be used to turn off throw and normamove objects
 	void TurnOffMoves(){
 		ThrowObj.gameObject.SetActive (false);
-		TrapObj.gameObject.SetActive (false);
+
 		NormalMoveObj.gameObject.SetActive (false);
 		NormalMoveAirObj.gameObject.SetActive (false);
 		SuperObj.gameObject.SetActive (false);

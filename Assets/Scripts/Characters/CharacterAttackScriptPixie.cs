@@ -11,6 +11,7 @@ public class CharacterAttackScriptPixie :  MonoBehaviour {
 	public GameObject SweepObj;
 	public GameObject SuperObj;
 	public GameObject SlideObj;
+	public GameObject explosionObj;
 	public float SlideStartup;
 	public float SlideRecovery;
 	public float SlideSpeed;
@@ -29,6 +30,7 @@ public class CharacterAttackScriptPixie :  MonoBehaviour {
 	public CharController CC;
 	public bool Player1;
 	public Rigidbody2D RB;
+
 	GameObject FBContainer;
 	FacingScript facing;
 	CharacterStateScript CSS;
@@ -40,7 +42,7 @@ public class CharacterAttackScriptPixie :  MonoBehaviour {
 		facing = GameObject.Find ("MatchHandler").GetComponent<FacingScript> ();
 		CC = GetComponent<CharController> ();
 		CSS = GetComponent<CharacterStateScript> ();
-		CC.SetAttackFunctions (Slide, NormalMove, Uppercut, Throw, Parry, Sweep, Super ,cancelStartup);
+		CC.SetAttackFunctions (Uppercut, NormalMove, Slide, Throw, Parry, Sweep, Super ,cancelStartup);
 		CSS.setCanceler (cancelStartup);
 		HS = GetComponent<Health>();
 		HS.setCancelFunc (cancelStartup);
@@ -57,7 +59,7 @@ public class CharacterAttackScriptPixie :  MonoBehaviour {
 
 		if ((transform.position.y <= -3) ){
 
-			if ((CSS.GetState() == 3) && (NormalMoveObj.activeSelf)){
+			if ((CSS.GetState() == 3) && (NormalMoveAirObj.activeSelf)){
 			
 				cancelNormalMoveAir();
 				airmove = true;
@@ -86,7 +88,7 @@ public class CharacterAttackScriptPixie :  MonoBehaviour {
 	void UseSlide(){
 
 		SlideObj.gameObject.SetActive (true);
-		ResetForce();
+
 		//rigidbody2D.gravityScale = 0;
 		if (facing.getDirection (Player1)) {
 			RB.AddForce(new Vector2(SlideSpeed, 0));
@@ -138,7 +140,7 @@ public class CharacterAttackScriptPixie :  MonoBehaviour {
 	
 	// uppercut functions
 	public void Uppercut(){
-		if ((CSS.GetState() == 1) && (UppercutObj.activeSelf == false)){
+		if ((explosionObj.activeSelf == false) && (UppercutObj.activeSelf == false)){
 			CSS.SetState(4, UppercutMoveRecovery);
 			Invoke("UseUppercut", UppercutMoveStartup);
 		}
@@ -146,9 +148,9 @@ public class CharacterAttackScriptPixie :  MonoBehaviour {
 	
 	void UseUppercut(){
 		if (facing.getDirection (Player1)) {
-			UppercutObj.transform.position = new Vector3 (transform.position.x + 3, transform.position.y, -5f);
+			UppercutObj.transform.position = new Vector3 (transform.position.x + 1.75f, transform.position.y, -5f);
 		} else {
-			UppercutObj.transform.position = new Vector3 (transform.position.x - 3, transform.position.y, -5f);
+			UppercutObj.transform.position = new Vector3 (transform.position.x - 1.75f, transform.position.y, -5f);
 		}
 		UppercutObj.gameObject.SetActive (true);
 	}
@@ -205,14 +207,27 @@ public class CharacterAttackScriptPixie :  MonoBehaviour {
 	
 	// Super functions
 	public void Super(){
-		if (CSS.GetState() == 1){
 			CSS.SetState(4, SuperRecovery);
 			Invoke("UseSuper", SuperStartup);
-		}
 	}
 	void UseSuper(){
 		SuperObj.gameObject.SetActive (true);
-		Invoke ("TurnOffMoves", .05f);
+		if (facing.getDirection (Player1)) {
+			RB.AddForce(new Vector2(1000, 0));
+		}else {
+			RB.AddForce(new Vector2(-1000, 0));
+		}
+		Invoke("ResetForce", .1f);
+		Invoke ("TurnOffMoves", .1f);
+		Invoke ("superPlacement", .5f);
+	}
+
+	void superPlacement(){
+		explosionObj.gameObject.SetActive(true);
+		if (Player1)
+			explosionObj.transform.position = GameObject.FindWithTag ("PlayerTwo").GetComponent<Transform>().position;
+		else
+			explosionObj.transform.position = GameObject.FindWithTag ("PlayerOne").GetComponent<Transform>().position;
 	}
 	
 	// to be used to turn off throw and normamove objects

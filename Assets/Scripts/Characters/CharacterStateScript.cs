@@ -82,7 +82,8 @@ states chart
 		Invoke("resetToNeutral", AmountOfFrames);
 		if (CurrentState == 5 || CurrentState == 9){
 			colorchange();
-			StartCoroutine(TimedrColorChange (AmountOfFrames));
+			Invoke("ColorReset", AmountOfFrames);
+			//StartCoroutine(TimedrColorChange (AmountOfFrames));
 		}
 
 
@@ -92,6 +93,9 @@ states chart
 	void resetToNeutral(){
 		CurrentState = 1;
 		GetComponentInParent<Rigidbody2D>().velocity = new Vector2 (0, 0);
+	}
+	void ColorReset(){
+		GetComponent<Renderer>().material.color = Color.white;
 	}
 	// resets state to default through Enumerator
 	IEnumerator TimedrStateChange(float duration){

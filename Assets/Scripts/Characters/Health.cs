@@ -86,6 +86,15 @@ public class Health : MonoBehaviour {
 			roundHandler.endRound ();
 	}
 
+	void chipDamage(float Damage){
+		health -= Damage*.15f;
+		SMS.addMeter (Damage*.15f);
+		guibar.fillAmount -=  Damage * .015f;
+		
+		if (health <= 0)
+			roundHandler.endRound ();
+	}
+
 	public void setCancelFunc(voidFuncDel x){
 		CancelStartDel = x;
 	}
@@ -96,7 +105,7 @@ public class Health : MonoBehaviour {
 		HitboxInfoScript HB = other.GetComponent<HitboxInfoScript> ();
 		Debug.Log (other.tag);
 		// check for hitbox tag, and if player is in hitstun
-		if (CanDamage && (other.tag == "Player"+  enemy + "HitBox")   && ( CSS.GetState() != 5) && !HB.isAirThrow()){
+		if (CanDamage && (other.tag == "Player"+  enemy + "HitBox")   && ( CSS.GetState() != 5) && ( CSS.GetState() != 10) && !HB.isAirThrow()){
 			if (HB.isThrow() && (CSS.GetState() != 3) && (CSS.GetState() != 2)){
 				SuccessfulHit(HB.getHitstun(), 0, HB.getDamage(), HB.isMultiHit());
 				SS.playGrab ();
@@ -136,6 +145,7 @@ public class Health : MonoBehaviour {
 					OtherPlayer.GetComponentInParent<Rigidbody2D>().AddForce(new Vector2(-HB.getBlockPushback(), 0));
 				}
 				CSS.SetState(2, HB.getBlockstun(), HB.getBlockPushback());
+				chipDamage(HB.getDamage());
 			SS.playBlock();
 			}
 		}else if ((CSS.GetState() == 3) && HB.isAirThrow()  ){

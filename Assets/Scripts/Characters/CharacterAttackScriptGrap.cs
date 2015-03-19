@@ -51,7 +51,7 @@ public class CharacterAttackScriptGrap : MonoBehaviour {
 		// check for ground until no longer airborne
 		if ((transform.position.y <= -3) ){
 			
-			if ((CSS.GetState() == 3) && (NormalMoveObj.activeSelf)){
+			if ((CSS.GetState() == 3) && (NormalMoveAirObj.activeSelf)){
 				
 				cancelNormalMoveAir();
 				CSS.SetState(4, .2f);
@@ -194,14 +194,22 @@ public class CharacterAttackScriptGrap : MonoBehaviour {
 	
 	// Super functions
 	public void Super(){
-		if (CSS.GetState() == 1){
-			CSS.SetState(4, SuperRecovery);
+			CSS.SetState(10, SuperRecovery);
 			Invoke("UseSuper", SuperStartup);
-		}
 	}
 	void UseSuper(){
 		SuperObj.gameObject.SetActive (true);
-		Invoke ("TurnOffMoves", .05f);
+
+		if (facing.getDirection (Player1)) {
+			RB.AddForce (new Vector2 (1500, 0));
+		} else {
+			RB.AddForce (new Vector2 (-1500, 0));	
+		}
+
+		Invoke ("ResetForce", .3f);
+		Invoke ("SuperStateChange", .3f);
+		Invoke ("TurnOffMoves", .3f);
+
 	}
 	
 	// to be used to turn off throw and normamove objects
@@ -214,7 +222,11 @@ public class CharacterAttackScriptGrap : MonoBehaviour {
 		SweepObj.gameObject.SetActive (false);
 		ReflectObj.gameObject.SetActive (false);
 	}
+	// generic state changer to be invoked for delay
+	void SuperStateChange(){
 
+		CSS.SetState (4, SuperRecovery -.3f);
+	}
 
 	// called to stop everything that script may be doing and reset char to default
 	public void cancelStartup(){
@@ -224,8 +236,8 @@ public class CharacterAttackScriptGrap : MonoBehaviour {
 	
 	// generic physics reset with faster falling
 	void ResetForce(){
+
 		RB.velocity = new Vector2(0, 0);
-		RB.AddForce(new Vector2(0, -200));
 	}
 	
 }

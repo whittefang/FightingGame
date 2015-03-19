@@ -93,7 +93,7 @@ public class CharController : MonoBehaviour {
 			if (((Input.GetButtonDown (controls[2]) && Input.GetButtonDown(controls[3]))  
 			    || (Input.GetButton (controls[2]) && Input.GetButtonDown(controls[3])) 
 			    || (Input.GetButtonDown (controls[2]) && Input.GetButton(controls[3]))) 
-			    && SMS.GetMeter() >= 0 && CSS.GetState() != 3 &&(bufferPeriod || CSS.GetState() == 1))  {
+			    && SMS.GetMeter() >= 5 && CSS.GetState() != 3 && (bufferPeriod || CSS.GetState() == 1))  {
 
 				Debug.Log ("ATTACK SUPER USED");
 				SMS.useMeter();

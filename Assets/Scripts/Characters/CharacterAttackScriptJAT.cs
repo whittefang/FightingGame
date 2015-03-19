@@ -67,7 +67,7 @@ public class CharacterAttackScriptJAT : MonoBehaviour {
 		// check for ground until no longer airborne
 		if ((transform.position.y <= -3) ){
 			
-			if ((CSS.GetState() == 3) && (NormalMoveObj.activeSelf)){
+			if ((CSS.GetState() == 3) && (NormalMoveAirObj.activeSelf)){
 				
 				cancelNormalMoveAir();
 				CSS.SetState(4, .2f);
